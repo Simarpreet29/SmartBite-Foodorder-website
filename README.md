@@ -1,4 +1,4 @@
-# 🍔 FoodieExpress - Full Stack Food Order Platform
+# 🍔 SmartBite - Full Stack Food Order Platform
 
 A feature-rich, full-stack food ordering application with integrated payment gateway and real-time order tracking.
 

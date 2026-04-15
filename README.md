@@ -56,3 +56,4 @@ Frontend (`food-order-frontend`):
 - Backend health endpoint is available at `/api/health`.
 - Frontend is configured as SPA with rewrite to `index.html`.
 - Socket.io tracking uses `VITE_API_BASE_URL` in production.
+# lala

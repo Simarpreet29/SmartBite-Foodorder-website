@@ -232,12 +232,6 @@ const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID || '';
 const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || '';
 
-// --- RAZORPAY INITIALIZATION ---
-const razorpay = new Razorpay({
-    key_id: RAZORPAY_KEY_ID,
-    key_secret: RAZORPAY_KEY_SECRET,
-});
-
 // 1. FIXED CORS
 app.use(cors({
     origin: [CLIENT_URL, 'http://localhost:5173'],
@@ -271,6 +265,11 @@ app.post('/api/payment/create-order', async (req, res) => {
         if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) {
             return res.status(500).json({ error: 'Razorpay keys are not configured on the server.' });
         }
+
+        const razorpay = new Razorpay({
+            key_id: RAZORPAY_KEY_ID,
+            key_secret: RAZORPAY_KEY_SECRET,
+        });
 
         const options = {
             amount: req.body.amount * 100, // Amount in paise (₹1 = 100 paise)

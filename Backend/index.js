@@ -233,6 +233,24 @@ const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID || '';
 const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || '';
 
+const isValidMongoUri = (uri) => {
+    if (!uri) return false;
+    const placeholderPatterns = [
+        '<',
+        'YOUR_CLUSTER',
+        'YOUR_DB_USER',
+        'YOUR_DB_PASSWORD',
+        'YOUR_DB',
+        'your-cluster-url',
+        'your-username',
+        'your-password',
+    ];
+
+    return uri.startsWith('mongodb://') || uri.startsWith('mongodb+srv://')
+        ? !placeholderPatterns.some((pattern) => uri.includes(pattern))
+        : false;
+};
+
 // 1. FIXED CORS
 app.use(cors({
     origin: [CLIENT_URL, 'http://localhost:5173'],
@@ -252,8 +270,9 @@ const io = new Server(server, {
 });
 
 const connectDatabase = async () => {
-    if (!MONGODB_URI) {
-        console.error('MONGODB_URI is required in production. Add it in Render environment variables.');
+    if (!isValidMongoUri(MONGODB_URI)) {
+        console.error('Invalid or missing MONGODB_URI. Set a real MongoDB Atlas connection string in Render, not the example placeholder.');
+        console.error('Example: mongodb+srv://username:password@cluster-name.xxxxx.mongodb.net/smartbite?retryWrites=true&w=majority');
         process.exit(1);
     }
 

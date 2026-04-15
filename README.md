@@ -1,36 +1,58 @@
-# 🍔 SmartBite - Full Stack Food Order Platform
+# SmartBite - Full Stack Food Order Platform
 
-A feature-rich, full-stack food ordering application with integrated payment gateway and real-time order tracking.
+Full-stack food ordering app with React frontend and Express/MongoDB backend.
 
-## 🚀 Key Features
-* **💳 Secure Payments:** Integrated **Razorpay** payment gateway for seamless transactions.
-* **📍 Order Tracking:** Real-time tracking of food orders from kitchen to delivery.
-* **👨‍🍳 Admin Panel:** Backend functionality to add, update, and delete dishes (Menu Management).
-* **🛒 Advanced Cart:** Persistent cart management with price calculations and tax logic.
-* **📱 Ultra-Responsive:** Modern UI designed for a smooth experience on all devices.
+## Project Structure
+- `food-web`: Vite + React frontend
+- `Backend`: Node.js + Express API
+- `render.yaml`: Render Blueprint (deploys frontend + backend)
 
-## 🛠️ Tech Stack
-* **Frontend:** React.js, Tailwind CSS, Lucide Icons
-* **Backend:** Node.js, Express.js
-* **Database:** MongoDB
-* **Payments:** Razorpay API
-* **State Management:** (e.g., Context API or Redux)
+## Local Setup
+1. Backend setup:
+   - Copy `Backend/.env.example` to `Backend/.env`
+   - Fill all values
+   - Run:
+     ```bash
+     cd Backend
+     npm install
+     npm start
+     ```
+2. Frontend setup:
+   - Copy `food-web/.env.example` to `food-web/.env`
+   - For local dev, set `VITE_API_BASE_URL=http://localhost:5000`
+   - Run:
+     ```bash
+     cd food-web
+     npm install
+     npm run dev
+     ```
 
-## 📁 Project Structure
-* `/food-web` - React Frontend (UI, Cart, Razorpay Integration)
-* `/Backend` - Node.js API (Dish Management, Order Processing, Payment Verification)
+## Deploy On Render
 
-## ⚙️ Installation & Setup
-1. **Clone the repository:**
-   ```bash
-   git clone [https://github.com/Simarpreet29/food-order-website.git](https://github.com/Simarpreet29/food-order-website.git)
+This repo is ready for Render Blueprint deploy using `render.yaml`.
 
-## ⚙️ Setup Frontend:
-cd food-web
-npm install
-npm run dev
+1. Push this repository to GitHub.
+2. In Render dashboard, click `New +` > `Blueprint`.
+3. Select this repository.
+4. Render reads `render.yaml` and creates:
+   - `food-order-backend` (Web Service)
+   - `food-order-frontend` (Static Site)
+5. Fill required environment variables:
 
-## ⚙️ Setup Backend:
-cd ../Backend
-npm install
-node server.js
+Backend (`food-order-backend`):
+- `MONGODB_URI`
+- `JWT_SECRET`
+- `CLIENT_URL` = your frontend Render URL (for CORS)
+- `RAZORPAY_KEY_ID`
+- `RAZORPAY_KEY_SECRET`
+
+Frontend (`food-order-frontend`):
+- `VITE_API_BASE_URL` = your backend Render URL
+- `VITE_RAZORPAY_KEY_ID` = same public Razorpay key id
+
+6. Trigger deploy.
+
+## Deployment Notes
+- Backend health endpoint is available at `/api/health`.
+- Frontend is configured as SPA with rewrite to `index.html`.
+- Socket.io tracking uses `VITE_API_BASE_URL` in production.

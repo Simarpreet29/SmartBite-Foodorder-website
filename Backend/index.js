@@ -212,6 +212,7 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs'); 
 const jwt = require('jsonwebtoken'); 
 const Razorpay = require('razorpay'); // 👈 Razorpay Import
+require('dotenv').config();
 
 // --- SOCKET.IO IMPORTS ---
 const http = require('http'); 
@@ -224,15 +225,22 @@ const User = require('./models/User');
 const app = express(); 
 const server = http.createServer(app); 
 
+const PORT = process.env.PORT || 5000;
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/smartbite';
+const JWT_SECRET = process.env.JWT_SECRET || 'SmartBite_Secret_Key_2026';
+const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
+const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID || '';
+const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || '';
+
 // --- RAZORPAY INITIALIZATION ---
 const razorpay = new Razorpay({
-    key_id: "rzp_test_Sawt3iCGE2rfB4", // 👈 Apni Key ID yahan dalo
-    key_secret: "Nc3270hfpOc5378EelPQQeiF", // 👈 Apni Key Secret yahan dalo
+    key_id: RAZORPAY_KEY_ID,
+    key_secret: RAZORPAY_KEY_SECRET,
 });
 
 // 1. FIXED CORS
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: [CLIENT_URL, 'http://localhost:5173'],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true
 }));
@@ -242,22 +250,28 @@ app.use(express.json());
 // 2. SOCKET.IO SETUP
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:5173",
+        origin: [CLIENT_URL, 'http://localhost:5173'],
         methods: ["GET", "POST", "PATCH"],
         credentials: true
     }
 });
 
-const JWT_SECRET = "SmartBite_Secret_Key_2026"; 
-
 // Database Connection
-mongoose.connect("mongodb://localhost:27017/smartbite")
+mongoose.connect(MONGODB_URI)
     .then(() => console.log("SmartBite DB Connected! 📦"))
     .catch((err) => console.error(err));
+
+app.get('/api/health', (req, res) => {
+    res.status(200).json({ ok: true });
+});
 
 // --- RAZORPAY ROUTE (NEW) ---
 app.post('/api/payment/create-order', async (req, res) => {
     try {
+        if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) {
+            return res.status(500).json({ error: 'Razorpay keys are not configured on the server.' });
+        }
+
         const options = {
             amount: req.body.amount * 100, // Amount in paise (₹1 = 100 paise)
             currency: "INR",
@@ -431,5 +445,4 @@ app.get('/api/orders/user/:email', async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-const PORT = 5000;
-server.listen(PORT, () => console.log(`SmartBite Live Server started on http://localhost:${PORT} 🚀`));
+server.listen(PORT, () => console.log(`SmartBite Live Server started on port ${PORT} 🚀`));

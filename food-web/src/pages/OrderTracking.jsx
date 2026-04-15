@@ -5,8 +5,10 @@ import io from 'socket.io-client';
 import { motion } from 'framer-motion';
 import axios from 'axios';
 
+const SOCKET_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+
 // Socket connection check
-const socket = io('http://localhost:5000');
+const socket = io(SOCKET_URL);
 
 const OrderTracking = () => {
     const [searchParams] = useSearchParams();

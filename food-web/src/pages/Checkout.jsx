@@ -121,6 +121,8 @@ import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 import axios from 'axios';
 
+const RAZORPAY_KEY_ID = import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_Sawt3iCGE2rfB4';
+
 const Checkout = () => {
   const { cartItems, totalPrice, clearCart } = useCart();
   const [loading, setLoading] = useState(false);
@@ -171,7 +173,7 @@ const Checkout = () => {
 
       // 2. Razorpay Options
       const options = {
-        key: "rzp_test_Sawt3iCGE2rfB4", // 👈 Yahan apni Key ID dalo
+        key: RAZORPAY_KEY_ID,
         amount: amount,
         currency: currency,
         name: "SmartBite",
